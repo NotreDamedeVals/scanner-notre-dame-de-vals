@@ -5,276 +5,264 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#080808">
+<meta name="referrer" content="no-referrer">
 <title>Scanner les billets — Notre-Dame de Vals</title>
 
 <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 
 <style>
 :root {
-  --black: #080808;
-  --blue: #0874bb;
-  --lime: #baff00;
-  --paper: #f1f1ed;
-  --white: #ffffff;
+  --black:#080808;
+  --blue:#0874bb;
+  --lime:#baff00;
+  --paper:#f1f1ed;
+  --white:#ffffff;
 }
-
-* { box-sizing: border-box; }
-
-html, body {
-  margin: 0;
-  min-height: 100%;
-  background: var(--paper);
-  color: var(--black);
-  font-family: Arial, Helvetica, sans-serif;
+* { box-sizing:border-box; }
+html,body {
+  margin:0;
+  min-height:100%;
+  background:var(--paper);
+  color:var(--black);
+  font-family:Arial,Helvetica,sans-serif;
 }
-
-button, input { font: inherit; }
-button { cursor: pointer; }
-button:disabled { opacity: .45; cursor: not-allowed; }
+button,input,select { font:inherit; }
+button { cursor:pointer; }
+button:disabled { opacity:.45;cursor:not-allowed; }
+[hidden] { display:none!important; }
 
 header {
-  background: var(--black);
-  color: white;
-  padding: 22px 5% 38px;
+  background:var(--black);
+  color:white;
+  padding:22px 5% 38px;
 }
-
 .brand {
-  font-size: 12px;
-  font-weight: 900;
-  letter-spacing: 1px;
-  line-height: 1.5;
+  font-size:12px;
+  font-weight:900;
+  letter-spacing:1px;
+  line-height:1.5;
 }
-
-.brand span { color: var(--lime); }
-
+.brand span { color:var(--lime); }
 .kicker {
-  margin-top: 35px;
-  color: var(--lime);
-  font-size: 11px;
-  font-weight: 900;
-  letter-spacing: 2px;
-  text-transform: uppercase;
+  margin-top:35px;
+  color:var(--lime);
+  font-size:11px;
+  font-weight:900;
+  letter-spacing:2px;
+  text-transform:uppercase;
 }
-
 h1 {
-  margin: 16px 0 18px;
-  font-size: clamp(44px, 11vw, 95px);
-  line-height: .9;
-  letter-spacing: -3px;
-  font-weight: 900;
+  margin:16px 0 18px;
+  font-size:clamp(44px,11vw,95px);
+  line-height:.9;
+  letter-spacing:-3px;
+  font-weight:900;
 }
-
-h1 span { color: var(--lime); }
-
+h1 span { color:var(--lime); }
 header p {
-  max-width: 520px;
-  color: #ccc;
-  line-height: 1.6;
-  font-size: 14px;
+  max-width:520px;
+  color:#ccc;
+  line-height:1.6;
+  font-size:14px;
 }
-
 main {
-  max-width: 850px;
-  margin: auto;
-  padding: 30px 4% 65px;
+  max-width:850px;
+  margin:auto;
+  padding:30px 4% 65px;
 }
-
 .test-label {
-  padding: 13px 16px;
-  background: #fff3d1;
-  border-left: 5px solid #b78500;
-  font-size: 13px;
-  line-height: 1.5;
-  margin-bottom: 22px;
+  padding:15px 16px;
+  background:#fff3d1;
+  border-left:5px solid #b78500;
+  font-size:13px;
+  line-height:1.6;
+  margin-bottom:22px;
 }
-
+.auth-panel {
+  padding:22px;
+  background:white;
+  border:2px solid var(--black);
+  margin-bottom:22px;
+}
+.auth-panel h2 {
+  margin:0 0 12px;
+  font-size:clamp(21px,4vw,30px);
+  text-transform:uppercase;
+}
+.auth-status {
+  padding:15px;
+  background:#eee;
+  border-left:5px solid #888;
+  line-height:1.6;
+  font-size:14px;
+}
+.auth-status.pending {
+  background:#e4edf3;
+  border-color:var(--blue);
+}
+.auth-status.success {
+  background:#e8f5d1;
+  border-color:#278343;
+}
+.auth-status.error {
+  background:#ffe9e9;
+  border-color:#cf3333;
+}
+.auth-panel button {
+  display:block;
+  width:100%;
+  min-height:52px;
+  margin-top:15px;
+  border:0;
+  background:var(--blue);
+  color:white;
+  font-size:13px;
+  font-weight:900;
+  text-transform:uppercase;
+}
 .scanner {
-  background: var(--black);
-  color: white;
-  padding: 22px;
+  background:var(--black);
+  color:white;
+  padding:22px;
 }
-
 .scanner h2 {
-  margin: 0 0 12px;
-  font-size: clamp(23px, 5vw, 36px);
-  text-transform: uppercase;
+  margin:0 0 12px;
+  font-size:clamp(23px,5vw,36px);
+  text-transform:uppercase;
 }
-
 .description {
-  color: #bbb;
-  font-size: 13px;
-  line-height: 1.6;
-  margin-bottom: 20px;
+  color:#bbb;
+  font-size:13px;
+  line-height:1.6;
+  margin-bottom:20px;
 }
-
-.camera {
-  background: #191919;
-  border: 3px solid var(--lime);
-  min-height: 260px;
-  overflow: hidden;
-}
-
-#reader { width: 100%; }
-
-#reader video {
-  width: 100% !important;
-  max-height: 480px !important;
-  object-fit: contain !important;
-}
-
-.placeholder {
-  text-align: center;
-  padding: 75px 15px;
-  color: #bbb;
-  font-size: 14px;
-}
-
-.placeholder strong {
-  display: block;
-  color: var(--lime);
-  font-size: 52px;
-  margin-bottom: 15px;
-}
-
-.actions {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  margin-top: 15px;
-}
-
-.actions button {
-  min-height: 60px;
-  padding: 13px;
-  border: 0;
-  background: var(--lime);
-  color: black;
-  font-size: 13px;
-  font-weight: 900;
-  text-transform: uppercase;
-}
-
-.actions button:last-child { background: white; }
-
-.feedback {
-  margin-top: 20px;
-  padding: 20px;
-  background: #282828;
-  border-left: 5px solid #888;
-  font-size: 15px;
-  line-height: 1.6;
-  overflow-wrap: anywhere;
-}
-
-.feedback.pending {
-  background: #263849;
-  border-color: #65baff;
-}
-
-.feedback.success {
-  background: #17361d;
-  border-color: var(--lime);
-}
-
-.feedback.error {
-  background: #481c1c;
-  border-color: #ff6868;
-}
-
 .label {
-  display: block;
-  margin: 25px 0 10px;
-  color: var(--lime);
-  font-size: 11px;
-  font-weight: 900;
-  letter-spacing: 1px;
-  text-transform: uppercase;
+  display:block;
+  margin:24px 0 10px;
+  color:var(--lime);
+  font-size:11px;
+  font-weight:900;
+  letter-spacing:1px;
+  text-transform:uppercase;
 }
-
+select,input {
+  width:100%;
+  min-height:54px;
+  padding:14px;
+  background:white;
+  color:black;
+  border:2px solid white;
+  font-size:15px;
+}
 input {
-  width: 100%;
-  padding: 15px;
-  min-height: 54px;
-  background: white;
-  color: black;
-  border: 2px solid white;
-  font-family: monospace;
-  font-size: 14px;
+  font-family:monospace;
+  font-size:14px;
 }
-
+.camera {
+  background:#191919;
+  border:3px solid var(--lime);
+  min-height:260px;
+  overflow:hidden;
+  margin-top:20px;
+}
+#reader { width:100%; }
+#reader video {
+  width:100%!important;
+  max-height:480px!important;
+  object-fit:contain!important;
+}
+.placeholder {
+  text-align:center;
+  padding:75px 15px;
+  color:#bbb;
+  font-size:14px;
+}
+.placeholder strong {
+  display:block;
+  color:var(--lime);
+  font-size:52px;
+  margin-bottom:15px;
+}
+.actions {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+  margin-top:15px;
+}
+.actions button {
+  min-height:60px;
+  padding:13px;
+  border:0;
+  background:var(--lime);
+  color:black;
+  font-size:13px;
+  font-weight:900;
+  text-transform:uppercase;
+}
+.actions button:last-child { background:white; }
+.feedback {
+  margin-top:20px;
+  padding:20px;
+  background:#282828;
+  border-left:5px solid #888;
+  font-size:15px;
+  line-height:1.6;
+  overflow-wrap:anywhere;
+}
+.feedback.pending {
+  background:#263849;
+  border-color:#65baff;
+}
+.feedback.success {
+  background:#17361d;
+  border-color:var(--lime);
+}
+.feedback.error {
+  background:#481c1c;
+  border-color:#ff6868;
+}
 .copy {
-  width: 100%;
-  min-height: 52px;
-  margin-top: 12px;
-  background: var(--blue);
-  color: white;
-  border: 0;
-  font-size: 12px;
-  font-weight: 900;
-  text-transform: uppercase;
+  width:100%;
+  min-height:52px;
+  margin-top:12px;
+  background:var(--blue);
+  color:white;
+  border:0;
+  font-size:12px;
+  font-weight:900;
+  text-transform:uppercase;
 }
-
 .note {
-  margin-top: 18px;
-  color: #bbb;
-  font-size: 12px;
-  line-height: 1.6;
+  margin-top:18px;
+  color:#bbb;
+  font-size:12px;
+  line-height:1.6;
 }
-
-.api-test {
-  margin-top: 24px;
-  padding: 22px;
-  background: white;
-  border: 2px solid var(--black);
+.return-button {
+  display:block;
+  width:100%;
+  min-height:60px;
+  margin-top:20px;
+  border:2px solid var(--black);
+  background:white;
+  color:black;
+  font-size:13px;
+  font-weight:900;
+  text-transform:uppercase;
 }
-
-.api-test h2 {
-  margin: 0 0 10px;
-  font-size: 22px;
-  text-transform: uppercase;
-}
-
-.api-test p {
-  font-size: 13px;
-  line-height: 1.6;
-}
-
-.api-test button {
-  width: 100%;
-  min-height: 58px;
-  padding: 12px;
-  border: 0;
-  background: var(--blue);
-  color: white;
-  font-size: 13px;
-  font-weight: 900;
-  text-transform: uppercase;
-}
-
-.api-test pre {
-  margin: 15px 0 0;
-  padding: 15px;
-  background: var(--paper);
-  font-size: 12px;
-  line-height: 1.6;
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
-}
-
 footer {
-  padding: 25px 5%;
-  background: var(--black);
-  color: #aaa;
-  text-align: center;
-  font-size: 11px;
-  letter-spacing: 1px;
-  text-transform: uppercase;
+  padding:25px 5%;
+  background:var(--black);
+  color:#aaa;
+  text-align:center;
+  font-size:11px;
+  letter-spacing:1px;
+  text-transform:uppercase;
 }
-
 @media(max-width:600px) {
-  .scanner { padding: 17px 13px; }
-  .actions { grid-template-columns: 1fr; }
-  h1 { letter-spacing: -2px; }
+  .scanner { padding:17px 13px; }
+  .actions { grid-template-columns:1fr; }
+  h1 { letter-spacing:-2px; }
 }
 </style>
 </head>
@@ -297,27 +285,54 @@ footer {
   </h1>
 
   <p>
-    Présentez le QR code d'un billet devant la caméra
-    de votre appareil pour en lire l'identifiant.
+    Contrôle sécurisé des billets des événements
+    de la Chapelle Notre-Dame de Vals.
   </p>
 </header>
 
 <main>
 
   <div class="test-label">
-    <strong>MODE TEST — Lecture uniquement.</strong>
-    Aucun billet ne sera validé et aucune entrée ne sera
-    ajoutée au compteur pendant ce test.
+    <strong>MODE TEST — Aucune validation de billet.</strong>
+    Nous vérifions la connexion entre Wix et GitHub.
+    La caméra peut lire des QR codes, mais aucun billet
+    ne sera validé et aucune entrée ne sera comptabilisée.
   </div>
 
-  <div class="scanner">
+  <section class="auth-panel">
+    <h2>Votre accès bénévole</h2>
 
-    <h2>Contrôle caméra</h2>
+    <div id="auth-status"
+         class="auth-status pending"
+         role="status"
+         aria-live="polite">
+      Vérification de votre autorisation…
+    </div>
+
+    <button id="return-auth"
+            type="button"
+            hidden>
+      Retourner à mon espace bénévole
+    </button>
+  </section>
+
+  <section class="scanner" id="scanner-panel" hidden>
+
+    <h2>Contrôle des entrées</h2>
 
     <p class="description">
-      Appuyez sur « Activer la caméra », puis autorisez
-      Safari à utiliser l'appareil photo.
+      Choisissez un événement autorisé puis activez
+      la caméra. Pendant cette phase de test,
+      les QR codes sont lus sans être validés.
     </p>
+
+    <label class="label" for="event-select">
+      Événement à contrôler
+    </label>
+
+    <select id="event-select">
+      <option value="">Chargement des événements…</option>
+    </select>
 
     <div class="camera">
       <div id="reader"></div>
@@ -329,7 +344,7 @@ footer {
     </div>
 
     <div class="actions">
-      <button id="start" type="button">
+      <button id="start" type="button" disabled>
         Activer la caméra
       </button>
 
@@ -342,7 +357,7 @@ footer {
          class="feedback"
          role="status"
          aria-live="polite">
-      Prêt à démarrer le scanner.
+      Sélectionnez un événement.
     </div>
 
     <label class="label" for="code">
@@ -354,38 +369,27 @@ footer {
            readonly
            placeholder="Aucun code détecté">
 
-    <button id="copy" class="copy"
-            type="button" disabled>
+    <button id="copy"
+            class="copy"
+            type="button"
+            disabled>
       Copier le code
     </button>
 
     <p class="note">
-      Cette page ne contient aucune clé Supabase.
-      La validation des billets sera activée
-      uniquement après les tests de sécurité.
+      Les événements affichés sont fournis par Wix
+      après vérification de votre autorisation.
+      Aucune clé Supabase n'est enregistrée
+      dans cette page.
     </p>
 
-  </div>
-
-  <!-- TEST DE COMMUNICATION GITHUB → WIX -->
-
-  <section class="api-test">
-    <h2>Test de la passerelle Wix</h2>
-
-    <p>
-      Ce test envoie volontairement un code invalide
-      à Wix. Il ne crée aucune session et ne modifie
-      aucun billet.
-    </p>
-
-    <button id="test-api" type="button">
-      Tester la passerelle Wix
-    </button>
-
-    <pre id="test-api-resultat"
-         role="status"
-         aria-live="polite">Aucun test effectué.</pre>
   </section>
+
+  <button id="return-site"
+          class="return-button"
+          type="button">
+    ← Retour à mon espace bénévole
+  </button>
 
 </main>
 
@@ -400,11 +404,28 @@ footer {
 
   const $ = id => document.getElementById(id);
 
+  const WIX_BASE =
+    "https://chapellenotredamed5.wixsite.com/notredamedevals";
+
+  const WIX_RETOUR =
+    WIX_BASE + "/espace-benevole";
+
+  const API_OUVRIR =
+    WIX_BASE + "/_functions/scanner_ouvrir";
+
+  const API_FERMER =
+    WIX_BASE + "/_functions/scanner_fermer";
+
   const UUID =
     /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
-  const API_WIX =
-    "https://chapellenotredamed5.wixsite.com/notredamedevals/_functions/scanner_ouvrir";
+  const HEX64 =
+    /^[0-9a-f]{64}$/i;
+
+  let jeton = null;
+  let expiration = null;
+  let evenements = [];
+  let evenementId = null;
 
   let scanner = null;
   let starting = false;
@@ -412,6 +433,16 @@ footer {
   let stopping = Promise.resolve();
   let generation = 0;
   let lastCode = "";
+  let opening = false;
+  let returning = false;
+
+  function authMessage(message, state = "") {
+    const element = $("auth-status");
+
+    element.textContent = message;
+    element.className =
+      "auth-status" + (state ? " " + state : "");
+  }
 
   function feedback(message, state = "") {
     const element = $("feedback");
@@ -421,10 +452,204 @@ footer {
       "feedback" + (state ? " " + state : "");
   }
 
+  function sessionValide() {
+    return Boolean(
+      jeton &&
+      expiration &&
+      Date.now() < expiration &&
+      evenementId
+    );
+  }
+
   function update() {
-    $("start").disabled = starting || active;
-    $("stop").disabled = !starting && !active;
-    $("copy").disabled = !$("code").value;
+    const autorise = sessionValide();
+
+    $("start").disabled =
+      !autorise || starting || active || returning;
+
+    $("stop").disabled =
+      !starting && !active;
+
+    $("copy").disabled =
+      !$("code").value;
+
+    $("event-select").disabled =
+      !jeton || starting || active || returning;
+  }
+
+  async function api(url, donnees) {
+    const reponse = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      cache: "no-store",
+      body: JSON.stringify(donnees)
+    });
+
+    const texte = await reponse.text();
+    let resultat;
+
+    try {
+      resultat = JSON.parse(texte);
+    } catch (erreur) {
+      throw new Error(
+        "Réponse invalide du serveur Wix (HTTP " +
+        reponse.status + ")."
+      );
+    }
+
+    if (!reponse.ok) {
+      throw new Error(
+        resultat.message ||
+        "Erreur du serveur Wix (HTTP " +
+        reponse.status + ")."
+      );
+    }
+
+    return resultat;
+  }
+
+  function lireCodeAutorisation() {
+    const fragment = window.location.hash;
+
+    // Retirer le code de la barre d'adresse
+    // avant toute communication réseau.
+
+    history.replaceState(
+      null,
+      "",
+      window.location.pathname +
+      window.location.search
+    );
+
+    const params = new URLSearchParams(
+      fragment.replace(/^#/, "")
+    );
+
+    const code = params.get("code");
+
+    return code && HEX64.test(code)
+      ? code
+      : null;
+  }
+
+  async function ouvrirSession() {
+    if (opening) return;
+
+    opening = true;
+
+    const code = lireCodeAutorisation();
+
+    if (!code) {
+      authMessage(
+        "Aucune autorisation valide trouvée. " +
+        "Ouvrez ce scanner depuis votre espace bénévole Wix.",
+        "error"
+      );
+
+      $("return-auth").hidden = false;
+      opening = false;
+      return;
+    }
+
+    authMessage(
+      "Autorisation reçue. Connexion sécurisée à Wix…",
+      "pending"
+    );
+
+    try {
+      const resultat = await api(
+        API_OUVRIR,
+        { code: code }
+      );
+
+      if (
+        resultat.succes !== true ||
+        typeof resultat.jeton !== "string" ||
+        !HEX64.test(resultat.jeton) ||
+        !Array.isArray(resultat.evenements)
+      ) {
+        throw new Error(
+          "Réponse d'autorisation incomplète."
+        );
+      }
+
+      const limite = Date.parse(resultat.expireLe);
+
+      if (!Number.isFinite(limite) ||
+          limite <= Date.now()) {
+        throw new Error(
+          "La session reçue est déjà expirée."
+        );
+      }
+
+      jeton = resultat.jeton;
+      expiration = limite;
+
+      evenements = resultat.evenements.filter(
+        e => e &&
+             typeof e.id === "string" &&
+             UUID.test(e.id)
+      );
+
+      if (!evenements.length) {
+        throw new Error(
+          "Aucun événement autorisé n'a été reçu."
+        );
+      }
+
+      const select = $("event-select");
+      select.replaceChildren();
+
+      evenements.forEach(e => {
+        select.add(
+          new Option(
+            e.titre || "Événement",
+            e.id
+          )
+        );
+      });
+
+      evenementId = evenements[0].id;
+      select.value = evenementId;
+
+      $("scanner-panel").hidden = false;
+
+      authMessage(
+        "✓ Connexion réussie. " +
+        evenements.length +
+        " événement(s) autorisé(s). " +
+        "Session temporaire active.",
+        "success"
+      );
+
+      feedback(
+        "Événement sélectionné : " +
+        evenements[0].titre +
+        ". Vous pouvez tester la lecture d'un QR code. " +
+        "Aucun billet ne sera validé.",
+        "pending"
+      );
+
+    } catch (erreur) {
+      jeton = null;
+      expiration = null;
+      evenements = [];
+      evenementId = null;
+
+      $("scanner-panel").hidden = true;
+      $("return-auth").hidden = false;
+
+      authMessage(
+        "Connexion impossible : " +
+        (erreur.message || String(erreur)),
+        "error"
+      );
+    } finally {
+      opening = false;
+      update();
+    }
   }
 
   function stopCamera() {
@@ -448,14 +673,14 @@ footer {
           if (instance.isScanning) {
             await instance.stop();
           }
-        } catch (error) {
-          console.warn("Arrêt caméra :", error);
+        } catch (erreur) {
+          console.warn("Arrêt caméra :", erreur);
         }
 
         try {
           instance.clear();
-        } catch (error) {
-          console.warn("Nettoyage :", error);
+        } catch (erreur) {
+          console.warn("Nettoyage caméra :", erreur);
         }
       });
 
@@ -463,28 +688,31 @@ footer {
   }
 
   async function startCamera() {
-    if (starting || active) return;
+    if (!sessionValide() || starting || active) {
+      if (jeton && expiration &&
+          Date.now() >= expiration) {
+        feedback(
+          "Session expirée. Retournez sur Wix " +
+          "pour ouvrir une nouvelle session.",
+          "error"
+        );
+      }
+      return;
+    }
 
     if (typeof Html5Qrcode === "undefined") {
       feedback(
-        "Le module QR n'a pas pu être chargé. Vérifiez la connexion Internet.",
+        "Le module QR n'a pas été chargé.",
         "error"
       );
       return;
     }
 
-    if (!window.isSecureContext) {
-      feedback(
-        "La caméra nécessite une connexion HTTPS.",
-        "error"
-      );
-      return;
-    }
-
-    if (!navigator.mediaDevices ||
+    if (!window.isSecureContext ||
+        !navigator.mediaDevices ||
         !navigator.mediaDevices.getUserMedia) {
       feedback(
-        "Ce navigateur ne donne pas accès à la caméra.",
+        "La caméra n'est pas accessible dans ce navigateur.",
         "error"
       );
       return;
@@ -496,7 +724,7 @@ footer {
     update();
 
     feedback(
-      "Demande d'autorisation de la caméra…",
+      "Ouverture de la caméra…",
       "pending"
     );
 
@@ -550,22 +778,22 @@ footer {
 
           if (UUID.test(code)) {
             feedback(
-              "✓ QR code lu avec succès. " +
-              "Format UUID reconnu. " +
-              "Aucune entrée n'a été enregistrée.",
+              "✓ QR code reconnu. " +
+              "Format UUID valide. " +
+              "MODE TEST : aucune entrée enregistrée.",
               "success"
             );
           } else {
             feedback(
-              "QR code lu, mais son contenu ne correspond " +
-              "pas au format UUID attendu pour les billets. " +
-              "Contenu : " + code,
+              "QR code lu, mais son contenu " +
+              "ne correspond pas au format UUID. " +
+              "MODE TEST : aucune entrée enregistrée.",
               "error"
             );
           }
         },
         function () {
-          // Aucun QR code détecté sur cette image.
+          // Aucun code détecté.
         }
       );
 
@@ -575,7 +803,7 @@ footer {
             await instance.stop();
           }
           instance.clear();
-        } catch (error) {}
+        } catch (erreur) {}
         return;
       }
 
@@ -583,23 +811,22 @@ footer {
       $("placeholder").hidden = true;
 
       feedback(
-        "Caméra active. Présentez un QR code " +
-        "devant l'objectif.",
+        "Caméra active. Présentez un QR code.",
         "pending"
       );
 
-    } catch (error) {
+    } catch (erreur) {
       if (token === generation) {
-        const reason =
-          error && error.message
-            ? error.message
-            : String(error);
+        const raison =
+          erreur && erreur.message
+            ? erreur.message
+            : String(erreur);
 
         await stopCamera();
 
         feedback(
           "Impossible d'activer la caméra : " +
-          reason,
+          raison,
           "error"
         );
       }
@@ -607,74 +834,52 @@ footer {
       if (token === generation) {
         starting = false;
       }
-
       update();
     }
   }
 
-  // ============================================
-  // TEST DE LA PASSERELLE WIX
-  // ============================================
+  async function retournerWix() {
+    if (returning) return;
 
-  async function testerPasserelle() {
-    const bouton = $("test-api");
-    const zone = $("test-api-resultat");
+    returning = true;
+    await stopCamera();
 
-    bouton.disabled = true;
-    zone.textContent = "Connexion à Wix en cours…";
+    const ancienJeton = jeton;
 
-    try {
-      const reponse = await fetch(API_WIX, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          code: "code-invalide"
-        })
-      });
+    jeton = null;
+    expiration = null;
+    evenementId = null;
 
-      const texte = await reponse.text();
+    update();
 
-      let resultat;
+    // Révoquer la session si possible.
+    // Le retour vers Wix ne doit pas rester bloqué
+    // si la connexion réseau échoue.
 
+    if (ancienJeton) {
       try {
-        resultat = JSON.parse(texte);
-      } catch (error) {
-        throw new Error(
-          "Wix n'a pas renvoyé de JSON. " +
-          "HTTP " + reponse.status +
-          ". Réponse : " + texte.slice(0, 300)
+        await Promise.race([
+          api(API_FERMER, {
+            jeton: ancienJeton
+          }),
+          new Promise((_, reject) =>
+            setTimeout(
+              () => reject(
+                new Error("Délai dépassé")
+              ),
+              2500
+            )
+          )
+        ]);
+      } catch (erreur) {
+        console.warn(
+          "Fermeture de session non confirmée :",
+          erreur
         );
       }
-
-      zone.textContent = JSON.stringify({
-        http: reponse.status,
-        resultat: resultat
-      }, null, 2);
-
-      if (
-        reponse.status === 400 &&
-        resultat.succes === false
-      ) {
-        zone.textContent +=
-          "\n\n✓ PASSERELLE ACCESSIBLE : " +
-          "le code invalide a été refusé.";
-      } else {
-        zone.textContent +=
-          "\n\nRéponse inattendue : " +
-          "une vérification est nécessaire.";
-      }
-
-    } catch (error) {
-      zone.textContent =
-        "ÉCHEC DU TEST\n\n" +
-        error.message +
-        "\n\nVérifier l'adresse Wix, " +
-        "les fonctions HTTP et les autorisations CORS.";
-    } finally {
-      bouton.disabled = false;
     }
+
+    window.location.replace(WIX_RETOUR);
   }
 
   $("start").addEventListener(
@@ -690,6 +895,38 @@ footer {
     }
   );
 
+  $("event-select").addEventListener(
+    "change",
+    function () {
+      if (active || starting) {
+        this.value = evenementId || "";
+        return;
+      }
+
+      const selection = evenements.find(
+        e => e.id === this.value
+      );
+
+      evenementId = selection
+        ? selection.id
+        : null;
+
+      lastCode = "";
+      $("code").value = "";
+
+      feedback(
+        selection
+          ? "Événement sélectionné : " +
+            selection.titre +
+            ". Mode test uniquement."
+          : "Sélectionnez un événement.",
+        "pending"
+      );
+
+      update();
+    }
+  );
+
   $("copy").addEventListener(
     "click",
     async function () {
@@ -699,11 +936,12 @@ footer {
 
       try {
         await navigator.clipboard.writeText(code);
+
         feedback(
-          "Code copié. Aucun billet n'a été validé.",
+          "Code copié. Aucun billet validé.",
           "success"
         );
-      } catch (error) {
+      } catch (erreur) {
         $("code").focus();
         $("code").select();
 
@@ -715,17 +953,47 @@ footer {
     }
   );
 
-  $("test-api").addEventListener(
+  $("return-site").addEventListener(
     "click",
-    testerPasserelle
+    retournerWix
+  );
+
+  $("return-auth").addEventListener(
+    "click",
+    retournerWix
   );
 
   window.addEventListener(
     "pagehide",
-    stopCamera
+    function () {
+      stopCamera();
+    }
   );
 
+  // Vérification locale de l'expiration.
+  setInterval(function () {
+    if (
+      jeton &&
+      expiration &&
+      Date.now() >= expiration
+    ) {
+      stopCamera();
+
+      jeton = null;
+      expiration = null;
+
+      authMessage(
+        "Votre session a expiré. " +
+        "Retournez sur Wix pour vous reconnecter.",
+        "error"
+      );
+
+      update();
+    }
+  }, 10000);
+
   update();
+  ouvrirSession();
 
 })();
 </script>
