@@ -1,0 +1,628 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#080808">
+<title>Scanner les billets — Notre-Dame de Vals</title>
+
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+
+<style>
+:root {
+  --black: #080808;
+  --blue: #0874bb;
+  --lime: #baff00;
+  --paper: #f1f1ed;
+  --white: #ffffff;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  min-height: 100%;
+  background: var(--paper);
+  color: var(--black);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+button, input {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: .45;
+  cursor: not-allowed;
+}
+
+header {
+  background: var(--black);
+  color: white;
+  padding: 22px 5% 38px;
+}
+
+.brand {
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  line-height: 1.5;
+}
+
+.brand span {
+  color: var(--lime);
+}
+
+.kicker {
+  margin-top: 35px;
+  color: var(--lime);
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+h1 {
+  margin: 16px 0 18px;
+  font-size: clamp(44px, 11vw, 95px);
+  line-height: .9;
+  letter-spacing: -3px;
+  font-weight: 900;
+}
+
+h1 span {
+  color: var(--lime);
+}
+
+header p {
+  max-width: 520px;
+  color: #ccc;
+  line-height: 1.6;
+  font-size: 14px;
+}
+
+main {
+  max-width: 850px;
+  margin: auto;
+  padding: 30px 4% 65px;
+}
+
+.test-label {
+  padding: 13px 16px;
+  background: #fff3d1;
+  border-left: 5px solid #b78500;
+  font-size: 13px;
+  line-height: 1.5;
+  margin-bottom: 22px;
+}
+
+.scanner {
+  background: var(--black);
+  color: white;
+  padding: 22px;
+}
+
+.scanner h2 {
+  margin: 0 0 12px;
+  font-size: clamp(23px, 5vw, 36px);
+  text-transform: uppercase;
+}
+
+.description {
+  color: #bbb;
+  font-size: 13px;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.camera {
+  background: #191919;
+  border: 3px solid var(--lime);
+  min-height: 260px;
+  overflow: hidden;
+}
+
+#reader {
+  width: 100%;
+}
+
+#reader video {
+  width: 100% !important;
+  max-height: 480px !important;
+  object-fit: contain !important;
+}
+
+.placeholder {
+  text-align: center;
+  padding: 75px 15px;
+  color: #bbb;
+  font-size: 14px;
+}
+
+.placeholder strong {
+  display: block;
+  color: var(--lime);
+  font-size: 52px;
+  margin-bottom: 15px;
+}
+
+.actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 15px;
+}
+
+.actions button {
+  min-height: 60px;
+  padding: 13px;
+  border: 0;
+  background: var(--lime);
+  color: black;
+  font-size: 13px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.actions button:last-child {
+  background: white;
+}
+
+.feedback {
+  margin-top: 20px;
+  padding: 20px;
+  background: #282828;
+  border-left: 5px solid #888;
+  font-size: 15px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.feedback.pending {
+  background: #263849;
+  border-color: #65baff;
+}
+
+.feedback.success {
+  background: #17361d;
+  border-color: var(--lime);
+}
+
+.feedback.error {
+  background: #481c1c;
+  border-color: #ff6868;
+}
+
+.label {
+  display: block;
+  margin: 25px 0 10px;
+  color: var(--lime);
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+input {
+  width: 100%;
+  padding: 15px;
+  min-height: 54px;
+  background: white;
+  color: black;
+  border: 2px solid white;
+  font-family: monospace;
+  font-size: 14px;
+}
+
+.copy {
+  width: 100%;
+  min-height: 52px;
+  margin-top: 12px;
+  background: var(--blue);
+  color: white;
+  border: 0;
+  font-size: 12px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.note {
+  margin-top: 18px;
+  color: #bbb;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+footer {
+  padding: 25px 5%;
+  background: var(--black);
+  color: #aaa;
+  text-align: center;
+  font-size: 11px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+@media(max-width:600px) {
+  .scanner {
+    padding: 17px 13px;
+  }
+
+  .actions {
+    grid-template-columns: 1fr;
+  }
+
+  h1 {
+    letter-spacing: -2px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="brand">
+    CHAPELLE <span>NOTRE-DAME</span> DE VALS
+    <br>ESPACE BÉNÉVOLE
+  </div>
+
+  <div class="kicker">
+    Préserver · Transmettre · Faire vivre
+  </div>
+
+  <h1>
+    SCANNER<br>
+    <span>LES BILLETS.</span>
+  </h1>
+
+  <p>
+    Présentez le QR code d'un billet devant la caméra
+    de votre appareil pour en lire l'identifiant.
+  </p>
+</header>
+
+<main>
+
+  <div class="test-label">
+    <strong>MODE TEST — Lecture uniquement.</strong>
+    Aucun billet ne sera validé et aucune entrée ne sera
+    ajoutée au compteur pendant ce test.
+  </div>
+
+  <div class="scanner">
+
+    <h2>Contrôle caméra</h2>
+
+    <p class="description">
+      Appuyez sur « Activer la caméra », puis autorisez
+      Safari à utiliser l'appareil photo.
+    </p>
+
+    <div class="camera">
+      <div id="reader"></div>
+
+      <div id="placeholder" class="placeholder">
+        <strong>▣</strong>
+        La caméra est actuellement désactivée.
+      </div>
+    </div>
+
+    <div class="actions">
+      <button id="start" type="button">
+        Activer la caméra
+      </button>
+
+      <button id="stop" type="button" disabled>
+        Arrêter la caméra
+      </button>
+    </div>
+
+    <div id="feedback"
+         class="feedback"
+         role="status"
+         aria-live="polite">
+      Prêt à démarrer le scanner.
+    </div>
+
+    <label class="label" for="code">
+      Dernier code QR détecté
+    </label>
+
+    <input id="code"
+           type="text"
+           readonly
+           placeholder="Aucun code détecté">
+
+    <button id="copy" class="copy"
+            type="button" disabled>
+      Copier le code
+    </button>
+
+    <p class="note">
+      Cette page ne contient aucune clé Supabase.
+      La validation des billets sera ajoutée ultérieurement
+      via une connexion sécurisée.
+    </p>
+
+  </div>
+
+</main>
+
+<footer>
+  Chapelle Notre-Dame de Vals
+  · Préserver, transmettre, faire vivre
+</footer>
+
+<script>
+(function () {
+  "use strict";
+
+  const $ = id => document.getElementById(id);
+
+  const UUID =
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+  let scanner = null;
+  let starting = false;
+  let active = false;
+  let stopping = Promise.resolve();
+  let generation = 0;
+  let lastCode = "";
+
+  function feedback(message, state = "") {
+    const element = $("feedback");
+
+    element.textContent = message;
+    element.className =
+      "feedback" + (state ? " " + state : "");
+  }
+
+  function update() {
+    $("start").disabled = starting || active;
+    $("stop").disabled = !starting && !active;
+    $("copy").disabled = !$("code").value;
+  }
+
+  function stopCamera() {
+    generation++;
+
+    starting = false;
+    active = false;
+
+    const instance = scanner;
+    scanner = null;
+
+    $("placeholder").hidden = false;
+
+    update();
+
+    stopping = stopping
+      .catch(() => {})
+      .then(async () => {
+        if (!instance) return;
+
+        try {
+          if (instance.isScanning) {
+            await instance.stop();
+          }
+        } catch (error) {
+          console.warn("Arrêt caméra :", error);
+        }
+
+        try {
+          instance.clear();
+        } catch (error) {
+          console.warn("Nettoyage :", error);
+        }
+      });
+
+    return stopping;
+  }
+
+  async function startCamera() {
+    if (starting || active) return;
+
+    if (typeof Html5Qrcode === "undefined") {
+      feedback(
+        "Le module QR n'a pas pu être chargé. Vérifiez la connexion Internet.",
+        "error"
+      );
+      return;
+    }
+
+    if (!window.isSecureContext) {
+      feedback(
+        "La caméra nécessite une connexion HTTPS.",
+        "error"
+      );
+      return;
+    }
+
+    if (!navigator.mediaDevices ||
+        !navigator.mediaDevices.getUserMedia) {
+      feedback(
+        "Ce navigateur ne donne pas accès à la caméra.",
+        "error"
+      );
+      return;
+    }
+
+    starting = true;
+    const token = ++generation;
+
+    update();
+    feedback(
+      "Demande d'autorisation de la caméra…",
+      "pending"
+    );
+
+    try {
+      await stopping;
+
+      if (token !== generation) return;
+
+      const instance = new Html5Qrcode(
+        "reader",
+        { verbose: false }
+      );
+
+      scanner = instance;
+
+      await instance.start(
+        { facingMode: "environment" },
+        {
+          fps: 8,
+          qrbox: function (width, height) {
+            const size = Math.max(
+              80,
+              Math.min(
+                260,
+                Math.floor(
+                  Math.min(width, height) * 0.75
+                )
+              )
+            );
+
+            return {
+              width: size,
+              height: size
+            };
+          }
+        },
+        function (decoded) {
+          if (token !== generation || !active) {
+            return;
+          }
+
+          const code = String(decoded || "").trim();
+
+          if (!code || code === lastCode) {
+            return;
+          }
+
+          lastCode = code;
+          $("code").value = code;
+          update();
+
+          if (UUID.test(code)) {
+            feedback(
+              "✓ QR code lu avec succès. " +
+              "Format UUID reconnu. " +
+              "Aucune entrée n'a été enregistrée.",
+              "success"
+            );
+          } else {
+            feedback(
+              "QR code lu, mais son contenu ne correspond " +
+              "pas au format UUID attendu pour les billets. " +
+              "Contenu : " + code,
+              "error"
+            );
+          }
+        },
+        function () {
+          // Aucun QR code détecté sur cette image.
+        }
+      );
+
+      if (token !== generation) {
+        try {
+          if (instance.isScanning) {
+            await instance.stop();
+          }
+          instance.clear();
+        } catch (error) {}
+        return;
+      }
+
+      active = true;
+      $("placeholder").hidden = true;
+
+      feedback(
+        "Caméra active. Présentez un QR code " +
+        "devant l'objectif.",
+        "pending"
+      );
+
+    } catch (error) {
+      if (token === generation) {
+        const reason =
+          error && error.message
+            ? error.message
+            : String(error);
+
+        await stopCamera();
+
+        feedback(
+          "Impossible d'activer la caméra : " +
+          reason,
+          "error"
+        );
+      }
+    } finally {
+      if (token === generation) {
+        starting = false;
+      }
+
+      update();
+    }
+  }
+
+  $("start").addEventListener(
+    "click",
+    startCamera
+  );
+
+  $("stop").addEventListener(
+    "click",
+    function () {
+      stopCamera();
+      feedback("Caméra arrêtée.");
+    }
+  );
+
+  $("copy").addEventListener(
+    "click",
+    async function () {
+      const code = $("code").value;
+
+      if (!code) return;
+
+      try {
+        await navigator.clipboard.writeText(code);
+        feedback(
+          "Code copié. Aucun billet n'a été validé.",
+          "success"
+        );
+      } catch (error) {
+        $("code").focus();
+        $("code").select();
+
+        feedback(
+          "Sélectionnez le code pour le copier.",
+          "pending"
+        );
+      }
+    }
+  );
+
+  window.addEventListener(
+    "pagehide",
+    stopCamera
+  );
+
+  update();
+
+})();
+</script>
+
+</body>
+</html>
