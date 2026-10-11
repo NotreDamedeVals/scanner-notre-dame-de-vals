@@ -18,9 +18,7 @@
   --white: #ffffff;
 }
 
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
 html, body {
   margin: 0;
@@ -30,18 +28,9 @@ html, body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-button, input {
-  font: inherit;
-}
-
-button {
-  cursor: pointer;
-}
-
-button:disabled {
-  opacity: .45;
-  cursor: not-allowed;
-}
+button, input { font: inherit; }
+button { cursor: pointer; }
+button:disabled { opacity: .45; cursor: not-allowed; }
 
 header {
   background: var(--black);
@@ -56,9 +45,7 @@ header {
   line-height: 1.5;
 }
 
-.brand span {
-  color: var(--lime);
-}
+.brand span { color: var(--lime); }
 
 .kicker {
   margin-top: 35px;
@@ -77,9 +64,7 @@ h1 {
   font-weight: 900;
 }
 
-h1 span {
-  color: var(--lime);
-}
+h1 span { color: var(--lime); }
 
 header p {
   max-width: 520px;
@@ -129,9 +114,7 @@ main {
   overflow: hidden;
 }
 
-#reader {
-  width: 100%;
-}
+#reader { width: 100%; }
 
 #reader video {
   width: 100% !important;
@@ -171,9 +154,7 @@ main {
   text-transform: uppercase;
 }
 
-.actions button:last-child {
-  background: white;
-}
+.actions button:last-child { background: white; }
 
 .feedback {
   margin-top: 20px;
@@ -240,6 +221,46 @@ input {
   line-height: 1.6;
 }
 
+.api-test {
+  margin-top: 24px;
+  padding: 22px;
+  background: white;
+  border: 2px solid var(--black);
+}
+
+.api-test h2 {
+  margin: 0 0 10px;
+  font-size: 22px;
+  text-transform: uppercase;
+}
+
+.api-test p {
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.api-test button {
+  width: 100%;
+  min-height: 58px;
+  padding: 12px;
+  border: 0;
+  background: var(--blue);
+  color: white;
+  font-size: 13px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.api-test pre {
+  margin: 15px 0 0;
+  padding: 15px;
+  background: var(--paper);
+  font-size: 12px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
 footer {
   padding: 25px 5%;
   background: var(--black);
@@ -251,17 +272,9 @@ footer {
 }
 
 @media(max-width:600px) {
-  .scanner {
-    padding: 17px 13px;
-  }
-
-  .actions {
-    grid-template-columns: 1fr;
-  }
-
-  h1 {
-    letter-spacing: -2px;
-  }
+  .scanner { padding: 17px 13px; }
+  .actions { grid-template-columns: 1fr; }
+  h1 { letter-spacing: -2px; }
 }
 </style>
 </head>
@@ -348,11 +361,31 @@ footer {
 
     <p class="note">
       Cette page ne contient aucune clé Supabase.
-      La validation des billets sera ajoutée ultérieurement
-      via une connexion sécurisée.
+      La validation des billets sera activée
+      uniquement après les tests de sécurité.
     </p>
 
   </div>
+
+  <!-- TEST DE COMMUNICATION GITHUB → WIX -->
+
+  <section class="api-test">
+    <h2>Test de la passerelle Wix</h2>
+
+    <p>
+      Ce test envoie volontairement un code invalide
+      à Wix. Il ne crée aucune session et ne modifie
+      aucun billet.
+    </p>
+
+    <button id="test-api" type="button">
+      Tester la passerelle Wix
+    </button>
+
+    <pre id="test-api-resultat"
+         role="status"
+         aria-live="polite">Aucun test effectué.</pre>
+  </section>
 
 </main>
 
@@ -369,6 +402,9 @@ footer {
 
   const UUID =
     /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+  const API_WIX =
+    "https://chapellenotredamed5.wixsite.com/notredamedevals/_functions/scanner_ouvrir";
 
   let scanner = null;
   let starting = false;
@@ -401,7 +437,6 @@ footer {
     scanner = null;
 
     $("placeholder").hidden = false;
-
     update();
 
     stopping = stopping
@@ -459,6 +494,7 @@ footer {
     const token = ++generation;
 
     update();
+
     feedback(
       "Demande d'autorisation de la caméra…",
       "pending"
@@ -576,6 +612,71 @@ footer {
     }
   }
 
+  // ============================================
+  // TEST DE LA PASSERELLE WIX
+  // ============================================
+
+  async function testerPasserelle() {
+    const bouton = $("test-api");
+    const zone = $("test-api-resultat");
+
+    bouton.disabled = true;
+    zone.textContent = "Connexion à Wix en cours…";
+
+    try {
+      const reponse = await fetch(API_WIX, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          code: "code-invalide"
+        })
+      });
+
+      const texte = await reponse.text();
+
+      let resultat;
+
+      try {
+        resultat = JSON.parse(texte);
+      } catch (error) {
+        throw new Error(
+          "Wix n'a pas renvoyé de JSON. " +
+          "HTTP " + reponse.status +
+          ". Réponse : " + texte.slice(0, 300)
+        );
+      }
+
+      zone.textContent = JSON.stringify({
+        http: reponse.status,
+        resultat: resultat
+      }, null, 2);
+
+      if (
+        reponse.status === 400 &&
+        resultat.succes === false
+      ) {
+        zone.textContent +=
+          "\n\n✓ PASSERELLE ACCESSIBLE : " +
+          "le code invalide a été refusé.";
+      } else {
+        zone.textContent +=
+          "\n\nRéponse inattendue : " +
+          "une vérification est nécessaire.";
+      }
+
+    } catch (error) {
+      zone.textContent =
+        "ÉCHEC DU TEST\n\n" +
+        error.message +
+        "\n\nVérifier l'adresse Wix, " +
+        "les fonctions HTTP et les autorisations CORS.";
+    } finally {
+      bouton.disabled = false;
+    }
+  }
+
   $("start").addEventListener(
     "click",
     startCamera
@@ -612,6 +713,11 @@ footer {
         );
       }
     }
+  );
+
+  $("test-api").addEventListener(
+    "click",
+    testerPasserelle
   );
 
   window.addEventListener(
